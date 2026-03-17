@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秒表與計時器</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Roboto+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="mode-switch">
+        <button id="btn-stopwatch" class="active">秒表</button>
+        <button id="btn-timer">計時器</button>
+    </div>
+
+    <div class="app-container">
+        <div id="stopwatch-view" class="view-panel active-view">
+            <div class="time-display">
+                <span id="sw-time">00:00:00</span><span id="sw-ms" class="ms-display">.00</span>
+            </div>
+            <div class="controls">
+                <button id="sw-start" class="btn primary">開始</button>
+                <button id="sw-lap" class="btn secondary" disabled>計圈</button>
+                <button id="sw-reset" class="btn secondary" disabled>重設</button>
+            </div>
+            <div class="laps-container">
+                <ul id="laps-list"></ul>
+            </div>
+        </div>
+
+        <div id="timer-view" class="view-panel">
+            <div id="timer-input-area" class="input-area active-input">
+                <div class="time-inputs">
+                    <input type="number" id="ti-hours" min="0" max="99" value="00">
+                    <span class="colon">:</span>
+                    <input type="number" id="ti-minutes" min="0" max="59" value="00">
+                    <span class="colon">:</span>
+                    <input type="number" id="ti-seconds" min="0" max="59" value="00">
+                </div>
+            </div>
+            
+            <div id="timer-display-area" class="display-area">
+                <div class="time-display">
+                    <span id="tm-time">00:00:00</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="tm-start" class="btn primary">開始</button>
+                <button id="tm-reset" class="btn secondary" disabled>重設</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="alert-modal" class="modal-overlay">
+        <div class="modal-content alert-content">
+            <div class="alert-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                    stroke="#5865f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <h2 id="alert-title">時間到！</h2>
+            <p id="alert-message">計時器已結束</p>
+            <button id="alert-close-btn" class="btn primary full-width">確定</button>
+        </div>
+    </div>
+
+    <div id="aki-footer">Made by Aki</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+{
+    "name": "秒表+計時器",
+    "short_name": "秒表計時",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#2c2f33",
+    "theme_color": "#2c2f33",
+    "icons": [
+        {
+            "src": "icon/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
