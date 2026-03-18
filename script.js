@@ -483,6 +483,24 @@ alertCloseBtn.addEventListener('click', () => {
     alertModal.classList.remove('active');
 });
 
+if ('mediaSession' in navigator) {
+    navigator.mediaSession.setActionHandler('play', () => {
+        if (currentMode === 'stopwatch') {
+            if (!isSwRunning) swStart.click();
+        } else {
+            if (!isTmRunning) tmStart.click();
+        }
+    });
+
+    navigator.mediaSession.setActionHandler('pause', () => {
+        if (currentMode === 'stopwatch') {
+            if (isSwRunning) swStart.click();
+        } else {
+            if (isTmRunning) tmStart.click();
+        }
+    });
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(() => { });
