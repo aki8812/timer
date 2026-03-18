@@ -13,6 +13,7 @@ const lapsList = document.getElementById('laps-list');
 
 const timerInputArea = document.getElementById('timer-input-area');
 const timerDisplayArea = document.getElementById('timer-display-area');
+const tiDays = document.getElementById('ti-days');
 const tiHours = document.getElementById('ti-hours');
 const tiMinutes = document.getElementById('ti-minutes');
 const tiSeconds = document.getElementById('ti-seconds');
@@ -192,9 +193,18 @@ function updateSwDisplay() {
     const formatted = formatSwTime(swElapsedTime);
     swTime.textContent = formatted.main;
     swMs.textContent = formatted.ms;
+    
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: '碼錶',
+            artist: `${formatted.main}${formatted.ms}`,
+            artwork: [{ src: 'icon/icon-512x512.png', sizes: '512x512', type: 'image/png' }]
+        });
+    }
 }
 
 swStart.addEventListener('click', () => {
+    playBeep('normal');
     if (isSwRunning) {
         isSwRunning = false;
         swSavedTime = swElapsedTime;
@@ -211,12 +221,14 @@ swStart.addEventListener('click', () => {
         
         stopKeepAlive();
         releaseWakeLock();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
     } else {
         isSwRunning = true;
         swStartTime = Date.now();
         
         initKeepAlive();
         requestWakeLock();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
         
         if (timerWorker) {
             timerWorker.postMessage({ command: 'START', type: 'STOPWATCH', endTime: swStartTime });
@@ -234,6 +246,7 @@ swStart.addEventListener('click', () => {
 });
 
 swReset.addEventListener('click', () => {
+    playBeep('normal');
     if (timerWorker) {
         timerWorker.postMessage({ command: 'STOP' });
     } else {
@@ -253,11 +266,12 @@ swReset.addEventListener('click', () => {
     swLap.disabled = true;
     swReset.disabled = true;
     
-    stopKeepAlive();
-    releaseWakeLock();
+        releaseWakeLock();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
 });
 
 swLap.addEventListener('click', () => {
+    playBeep('normal');
     if (!isSwRunning) return;
     
     const currentLapTime = swElapsedTime;
@@ -284,14 +298,19 @@ swLap.addEventListener('click', () => {
     lapsList.prepend(li);
 });
 
-// Timer Logic
-[tiHours, tiMinutes, tiSeconds].forEach(input => {
+[tiDays, tiHours, tiMinutes, tiSeconds].forEach(input => {
     input.addEventListener('change', () => {
-        let val = parseInt(input.value) || 0;
-        if (input.id === 'ti-hours' && val > 99) val = 99;
-        if (input.id !== 'ti-hours' && val > 59) val = 59;
+        let val = parseInt(input.value);
+        if (isNaN(val)) {
+            input.value = '';
+            return;
+        }
+        if (input.id === 'ti-days' && val > 99) val = 99;
+        if (input.id === 'ti-hours' && val > 23) val = 23;
+        if (input.id === 'ti-minutes' && val > 59) val = 59;
+        if (input.id === 'ti-seconds' && val > 59) val = 59;
         if (val < 0) val = 0;
-        input.value = val.toString().padStart(2, '0');
+        input.value = val;
     });
 });
 
@@ -301,14 +320,19 @@ let isTmRunning = false;
 let tmEndTime = 0;
 
 function formatTmTime(totalSeconds) {
-    const h = Math.floor(totalSeconds / 3600);
+    const d = Math.floor(totalSeconds / 86400);
+    const h = Math.floor((totalSeconds % 86400) / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
     
+    const dStr = d.toString().padStart(2, '0');
     const hStr = h.toString().padStart(2, '0');
     const mStr = m.toString().padStart(2, '0');
     const sStr = s.toString().padStart(2, '0');
     
+    if (d > 0) {
+        return `${dStr}:${hStr}:${mStr}:${sStr}`;
+    }
     if (h > 0) {
         return `${hStr}:${mStr}:${sStr}`;
     }
@@ -319,7 +343,7 @@ function updateTmDisplay() {
     tmTime.textContent = formatTmTime(tmRemainingSeconds);
     if ('mediaSession' in navigator) {
         navigator.mediaSession.metadata = new MediaMetadata({
-            title: currentMode === 'timer' ? '計時器' : '秒表',
+            title: currentMode === 'timer' ? '計時器' : '碼錶',
             artist: formatTmTime(tmRemainingSeconds),
             artwork: [{ src: 'icon/icon-512x512.png', sizes: '512x512', type: 'image/png' }]
         });
@@ -327,6 +351,7 @@ function updateTmDisplay() {
 }
 
 tmStart.addEventListener('click', () => {
+    playBeep('normal');
     if (Notification.permission === 'default') {
         Notification.requestPermission();
     }
@@ -345,13 +370,15 @@ tmStart.addEventListener('click', () => {
         
         stopKeepAlive();
         releaseWakeLock();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused';
     } else {
         if (tmRemainingSeconds === 0) {
+            const d = parseInt(tiDays.value) || 0;
             const h = parseInt(tiHours.value) || 0;
             const m = parseInt(tiMinutes.value) || 0;
             const s = parseInt(tiSeconds.value) || 0;
             
-            tmTotalSeconds = h * 3600 + m * 60 + s;
+            tmTotalSeconds = d * 86400 + h * 3600 + m * 60 + s;
             tmRemainingSeconds = tmTotalSeconds;
             
             if (tmTotalSeconds === 0) return;
@@ -363,6 +390,7 @@ tmStart.addEventListener('click', () => {
 
         initKeepAlive();
         requestWakeLock();
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing';
         
         isTmRunning = true;
         tmEndTime = Date.now() + tmRemainingSeconds * 1000;
@@ -382,6 +410,7 @@ tmStart.addEventListener('click', () => {
 });
 
 tmReset.addEventListener('click', () => {
+    playBeep('normal');
     if (timerWorker) {
         timerWorker.postMessage({ command: 'STOP' });
     } else {
@@ -400,9 +429,11 @@ tmReset.addEventListener('click', () => {
     
     stopKeepAlive();
     releaseWakeLock();
+    if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'none';
 });
 
 function showAlert() {
+    playBeep('finish');
     alertModal.classList.add('active');
     stopKeepAlive();
     releaseWakeLock();

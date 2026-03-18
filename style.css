@@ -225,41 +225,71 @@ body {
     display: block;
 }
 
-.time-inputs {
+.time-inputs-container {
     display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 4rem;
 }
 
-.time-inputs input {
-    background: transparent;
-    border: none;
+.input-group input {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     color: var(--text);
     font-family: var(--font-mono);
-    font-size: 4rem;
-    width: 2.2ch;
+    font-size: 3rem;
+    width: 3ch;
     text-align: center;
     outline: none;
-    border-bottom: 2px solid transparent;
     transition: border-color 0.3s;
+    padding: 0.5rem 0;
 }
 
-.time-inputs input:focus {
-    border-bottom: 2px solid var(--brand);
+.input-group input:focus {
+    border-color: var(--brand);
 }
 
-.time-inputs input::-webkit-outer-spin-button,
-.time-inputs input::-webkit-inner-spin-button {
+.input-group input::-webkit-outer-spin-button,
+.input-group input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.colon {
-    font-size: 4rem;
+.input-group span {
     color: var(--text-dim);
-    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+@media (max-width: 480px) {
+    .time-display {
+        font-size: 4rem;
+    }
+    
+    .ms-display {
+        font-size: 1.5rem;
+    }
+    
+    .input-group input {
+        font-size: 2.2rem;
+        width: 2.8ch;
+        padding: 0.25rem 0;
+    }
+    
+    .input-group span {
+        font-size: 1rem;
+    }
+    
+    .time-inputs-container {
+        gap: 0.5rem;
+    }
 }
 
 .modal-overlay {

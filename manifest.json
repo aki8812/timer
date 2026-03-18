@@ -1,6 +1,6 @@
 {
-    "name": "秒表與計時器",
-    "short_name": "秒表計時",
+    "name": "碼錶與計時器",
+    "short_name": "碼錶計時",
     "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#2c2f33",

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>秒表與計時器</title>
+    <title>碼錶與計時器</title>
     <link rel="icon" href="favicon.ico">
     <link rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@
 
 <body>
     <div class="mode-switch">
-        <button id="btn-stopwatch" class="active">秒表</button>
+        <button id="btn-stopwatch" class="active">碼錶</button>
         <button id="btn-timer">計時器</button>
     </div>
 
@@ -38,12 +38,23 @@
 
         <div id="timer-view" class="view-panel">
             <div id="timer-input-area" class="input-area active-input">
-                <div class="time-inputs">
-                    <input type="number" id="ti-hours" min="0" max="99" value="00">
-                    <span class="colon">:</span>
-                    <input type="number" id="ti-minutes" min="0" max="59" value="00">
-                    <span class="colon">:</span>
-                    <input type="number" id="ti-seconds" min="0" max="59" value="00">
+                <div class="time-inputs-container">
+                    <div class="input-group">
+                        <input type="number" id="ti-days" min="0" max="99" placeholder="0">
+                        <span>日</span>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="ti-hours" min="0" max="23" placeholder="0">
+                        <span>時</span>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="ti-minutes" min="0" max="59" placeholder="0">
+                        <span>分</span>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="ti-seconds" min="0" max="59" placeholder="0">
+                        <span>秒</span>
+                    </div>
                 </div>
             </div>
             
