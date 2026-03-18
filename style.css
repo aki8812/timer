@@ -14,6 +14,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    touch-action: manipulation;
 }
 
 body {
@@ -25,6 +26,7 @@ body {
     flex-direction: column;
     align-items: center;
     overflow: hidden;
+    touch-action: manipulation;
 }
 
 .mode-switch {
