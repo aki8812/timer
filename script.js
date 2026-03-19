@@ -173,16 +173,19 @@ function updateMediaSession() {
     });
 }
 
-const timerWorker = new Worker('timer-worker.js');
-timerWorker.onmessage = function (e) {
+const swWorker = new Worker('timer-worker.js');
+swWorker.onmessage = function (e) {
     if (e.data.type === 'TICK') {
-        if (currentMode === 'stopwatch' && isSwRunning) {
-            swElapsedTime = e.data.value + swSavedTime;
-            updateSwDisplay();
-        } else if (currentMode === 'timer' && isTmRunning) {
-            tmRemainingSeconds = e.data.value;
-            updateTmDisplay();
-        }
+        swElapsedTime = e.data.value + swSavedTime;
+        updateSwDisplay();
+    }
+};
+
+const tmWorker = new Worker('timer-worker.js');
+tmWorker.onmessage = function (e) {
+    if (e.data.type === 'TICK') {
+        tmRemainingSeconds = e.data.value;
+        updateTmDisplay();
     } else if (e.data.type === 'FINISH') {
         tmRemainingSeconds = 0;
         updateTmDisplay();
@@ -215,7 +218,7 @@ function startStopwatch() {
     swStartTime = Date.now();
     initKeepAlive();
     requestWakeLock();
-    timerWorker.postMessage({ command: 'START', type: 'STOPWATCH', endTime: swStartTime });
+    swWorker.postMessage({ command: 'START', type: 'STOPWATCH', endTime: swStartTime });
     swStart.textContent = '暫停';
     swStart.classList.replace('primary', 'danger');
     swLap.disabled = false;
@@ -228,7 +231,7 @@ function stopStopwatch() {
     playBeep('normal');
     isSwRunning = false;
     swSavedTime = swElapsedTime;
-    timerWorker.postMessage({ command: 'STOP' });
+    swWorker.postMessage({ command: 'STOP' });
     swStart.textContent = '繼續';
     swStart.classList.replace('danger', 'primary');
     swLap.disabled = true;
@@ -256,7 +259,7 @@ function startTimer() {
     tmEndTime = Date.now() + tmRemainingSeconds * 1000;
     initKeepAlive();
     requestWakeLock();
-    timerWorker.postMessage({ command: 'START', type: 'TIMER', endTime: tmEndTime });
+    tmWorker.postMessage({ command: 'START', type: 'TIMER', endTime: tmEndTime });
     tmStart.textContent = '暫停';
     tmStart.classList.replace('primary', 'danger');
     tmReset.disabled = false;
@@ -267,7 +270,7 @@ function stopTimer() {
     if (!isTmRunning) return;
     playBeep('normal');
     isTmRunning = false;
-    timerWorker.postMessage({ command: 'STOP' });
+    tmWorker.postMessage({ command: 'STOP' });
     tmStart.textContent = '繼續';
     tmStart.classList.replace('danger', 'primary');
     stopKeepAlive();
@@ -281,7 +284,7 @@ swStart.addEventListener('click', () => {
 
 swReset.addEventListener('click', () => {
     playBeep('normal');
-    timerWorker.postMessage({ command: 'STOP' });
+    swWorker.postMessage({ command: 'STOP' });
     isSwRunning = false;
     swElapsedTime = 0;
     swSavedTime = 0;
@@ -325,7 +328,7 @@ tmStart.addEventListener('click', () => {
 
 tmReset.addEventListener('click', () => {
     playBeep('normal');
-    timerWorker.postMessage({ command: 'STOP' });
+    tmWorker.postMessage({ command: 'STOP' });
     isTmRunning = false;
     tmRemainingSeconds = 0;
     tmStart.textContent = '開始';
