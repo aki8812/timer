@@ -31,6 +31,9 @@ let tmRemainingSeconds = 0;
 let tmTotalSeconds = 0;
 let tmEndTime = 0;
 
+btnStopwatch.addEventListener('click', () => switchMode('stopwatch'));
+btnTimer.addEventListener('click', () => switchMode('timer'));
+
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let keepAliveCtx = null;
 let keepAliveSource = null;
