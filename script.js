@@ -175,7 +175,7 @@ function updateMediaSession() {
 
 const swWorker = new Worker('timer-worker.js');
 swWorker.onmessage = function (e) {
-    if (e.data.type === 'TICK') {
+    if (e.data.type === 'TICK' && isSwRunning) {
         swElapsedTime = e.data.value + swSavedTime;
         updateSwDisplay();
     }
@@ -183,10 +183,10 @@ swWorker.onmessage = function (e) {
 
 const tmWorker = new Worker('timer-worker.js');
 tmWorker.onmessage = function (e) {
-    if (e.data.type === 'TICK') {
+    if (e.data.type === 'TICK' && isTmRunning) {
         tmRemainingSeconds = e.data.value;
         updateTmDisplay();
-    } else if (e.data.type === 'FINISH') {
+    } else if (e.data.type === 'FINISH' && isTmRunning) {
         tmRemainingSeconds = 0;
         updateTmDisplay();
         isTmRunning = false;
